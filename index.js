@@ -144,7 +144,7 @@ function spawnEnnemies() {
     }
 
         ennemies.push(new Ennemie(x, y, radius, color, velocity))
-    }, 1000)
+    }, 1350)
 }
 
 let animationId
