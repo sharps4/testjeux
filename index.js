@@ -66,12 +66,44 @@ class Ennemie {
     }
 }
 
+const friction = 0.99
+class Particule {
+    constructor(x, y, radius, color, velocity) {
+        this.x = x
+        this.y = y
+        this.radius = radius
+        this.color = color
+        this.velocity = velocity
+        this.alpha = 1
+    }
+
+    draw() {
+        c.save()
+        c.globalAlpha = this.alpha
+        c.beginPath()
+        c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+        c.fillStyle = this.color
+        c.fill()
+        c.restore()
+    }
+
+    update() {
+        this.draw()
+        this.velocity.x *= friction 
+        this.velocity.y *= friction 
+        this.x = this.x + this.velocity.x
+        this.y = this.y + this.velocity.y
+        this.alpha -= 0.01
+    }
+}
+
 const x = canvas.width / 2
 const y = canvas.height / 2
 
 const joueur = new Joueur(x, y, 10, 'white')
 const projectiles = []
 const ennemies = []
+const particules = []
 
 function spawnEnnemies() {
     setInterval(() => {
@@ -106,8 +138,17 @@ function animate() {
     c.fillStyle = 'rgba(0, 0, 0, 0.1)'
     c.fillRect(0, 0, canvas.width, canvas.height)
     joueur.draw()
+    particules.forEach((particule, index) => {
+        if (particule.alpha <= 0) {
+            particules.splice(index, 1)
+        } else {
+            particule.update()
+        }
+    });
+
     projectiles.forEach((projectile, index) => {
         projectile.update()
+
 
         //supprime les projectiles qui sortent de l'écran
         if (projectile.x - projectile.radius < 0 || projectile.x - projectile.radius > canvas.width || projectile.y + projectile.radius < 0 || projectile.y - projectile.radius > canvas.height) {
@@ -132,7 +173,13 @@ function animate() {
 
             //quand on touche les ennemies
             if (dist - ennemie.radius - projectile.radius < 1) {
-                if(ennemie.radius - 10 > 10){
+
+                //création de particules
+                for (let i = 0; i < ennemie.radius * 2; i++) {
+                    particules.push(new Particule(projectile.x, projectile.y, Math.random() * 2, ennemie.color, {x: (Math.random() - 0.5) * (Math.random() *6), y: (Math.random() - 0.5) * (Math.random() *6)}))
+                }
+
+                if(ennemie.radius - 10 > 5){
                     gsap.to(ennemie, {
                         radius: ennemie.radius - 10
                     })
@@ -163,7 +210,3 @@ addEventListener('click', (event) => {
 
 animate()
 spawnEnnemies()
-
-
-
-// 1h17:30
