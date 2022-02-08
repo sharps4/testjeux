@@ -4,6 +4,10 @@ const c = canvas.getContext('2d')
 canvas.width = innerWidth
 canvas.height = innerHeight
 
+const scoreEl = document.querySelector('#scoreEl')
+const commencerBtn = document.querySelector('#commencerBtn')
+const modalEl = document.querySelector('#modalEl')
+
 class Joueur {
     constructor(x, y, radius, color) {
         this.x = x
@@ -133,6 +137,7 @@ function spawnEnnemies() {
 }
 
 let animationId
+let score = 0
 function animate() {
     animationId = requestAnimationFrame(animate)
     c.fillStyle = 'rgba(0, 0, 0, 0.1)'
@@ -180,6 +185,12 @@ function animate() {
                 }
 
                 if(ennemie.radius - 10 > 5){
+                //score
+                score += 100
+                scoreEl.innerHTML = score
+                console.log(score)
+
+
                     gsap.to(ennemie, {
                         radius: ennemie.radius - 10
                     })
@@ -187,6 +198,10 @@ function animate() {
                         projectiles.splice(projectileIndex, 1)
                     }, 0)
                 } else {
+                    //score
+                    score += 50
+                    scoreEl.innerHTML = score
+
                     setTimeout(() => {
                         ennemies.splice(index, 1)
                         projectiles.splice(projectileIndex, 1)
@@ -208,5 +223,10 @@ addEventListener('click', (event) => {
     projectiles.push(new Projectile(canvas.width / 2, canvas.height / 2, 5, 'white', velocity))
 })
 
-animate()
-spawnEnnemies()
+commencerBtn.addEventListener('click', () => {
+    animate()
+    spawnEnnemies()
+    modalEl.style.display = 'none'
+})
+
+//1h49:6
