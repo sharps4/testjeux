@@ -7,6 +7,7 @@ canvas.height = innerHeight
 const scoreEl = document.querySelector('#scoreEl')
 const commencerBtn = document.querySelector('#commencerBtn')
 const modalEl = document.querySelector('#modalEl')
+const bigScoreEl = document.querySelector('#bigScoreEl')
 
 class Joueur {
     constructor(x, y, radius, color) {
@@ -104,10 +105,20 @@ class Particule {
 const x = canvas.width / 2
 const y = canvas.height / 2
 
-const joueur = new Joueur(x, y, 10, 'white')
-const projectiles = []
-const ennemies = []
-const particules = []
+let joueur = new Joueur(x, y, 10, 'white')
+let projectiles = []
+let ennemies = []
+let particules = []
+
+function init() {
+    joueur = new Joueur(x, y, 10, 'white')
+    projectiles = []
+    ennemies = []
+    particules = []
+    score = 0
+    scoreEl.innerHTML = score
+    bigScoreEl.innerHTML = score
+}
 
 function spawnEnnemies() {
     setInterval(() => {
@@ -171,6 +182,8 @@ function animate() {
         //fin de partie
         if (dist - ennemie.radius - joueur.radius < 1){
             cancelAnimationFrame(animationId)
+            modalEl.style.display = 'flex'
+            bigScoreEl.innerHTML = score
         }
 
         projectiles.forEach((projectile, projectileIndex) => {
@@ -224,9 +237,9 @@ addEventListener('click', (event) => {
 })
 
 commencerBtn.addEventListener('click', () => {
+    init()
     animate()
     spawnEnnemies()
     modalEl.style.display = 'none'
 })
 
-//1h49:6
